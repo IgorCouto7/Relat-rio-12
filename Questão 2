@@ -1,0 +1,20 @@
+data Item = Item { nomeItem :: String, categoria :: String, precoItem :: Double } deriving Show
+data CompraZelda = CompraZelda { itens :: [Item] } deriving Show
+
+calculaDesconto :: [Item] -> Double
+calculaDesconto xs =
+    let total = sum (map precoItem xs)
+    in if total > 200 then total * 0.10 else 0
+
+valorFinal :: CompraZelda -> Double
+valorFinal (CompraZelda xs)
+    | total > 200 = total - calculaDesconto xs
+    | otherwise = total + 15
+  where total = sum (map precoItem xs)
+
+main :: IO ()
+main = do
+    let i1 = Item "Espada Mestre" "Arma" 250
+        i2 = Item "Poção de Cura" "Poção" 50
+        compra = CompraZelda [i1, i2]
+    print (valorFinal compra)
