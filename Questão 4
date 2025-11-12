@@ -1,0 +1,29 @@
+data Servico = Servico { nomeServico :: String, tipoServico :: String, precoServico :: Double } deriving Show
+data StatusAtendimento = EmAndamento | Finalizado | CanceladoA deriving (Eq, Show)
+data Atendimento = Atendimento { servicos :: [Servico], statusA :: StatusAtendimento } deriving Show
+
+bonusEspiritual :: [Servico] -> Double
+bonusEspiritual xs =
+    let total = sum (map precoServico xs)
+        base = if length xs > 3 then total * 1.25 else total
+    in if base > 500 then base * 0.9 else base
+
+valorFinalAtendimento :: Atendimento -> Double
+valorFinalAtendimento (Atendimento _ CanceladoA) = 0
+valorFinalAtendimento (Atendimento xs _) = bonusEspiritual xs
+
+descricaoPrimeiroServico :: Atendimento -> String
+descricaoPrimeiroServico (Atendimento [] _) = "Nenhum serviço disponível"
+descricaoPrimeiroServico (Atendimento (s:_) _) =
+    nomeServico s ++ " - " ++ tipoServico s
+
+main :: IO ()
+main = do
+    let s1 = Servico "Banho de Ervas" "Banho" 200
+        s2 = Servico "Massagem Espiritual" "Massagem" 180
+        s3 = Servico "Banquete" "Comida" 250
+        at1 = Atendimento [s1, s2, s3] Finalizado
+        at2 = Atendimento [s1] CanceladoA
+    print (valorFinalAtendimento at1)
+    putStrLn (descricaoPrimeiroServico at1)
+    print (valorFinalAtendimento at2)
