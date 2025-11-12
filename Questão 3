@@ -1,0 +1,27 @@
+data Banda = Banda { nomeBanda :: String, genero :: String, cache :: Double } deriving Show
+data StatusEvento = Ativo | Encerrado | Cancelado deriving (Eq, Show)
+data Evento = Evento { bandas :: [Banda], statusE :: StatusEvento } deriving Show
+
+custoTotalEvento :: Evento -> Double
+custoTotalEvento (Evento _ Cancelado) = 0
+custoTotalEvento (Evento bs _) = sum (map cache bs) * 1.20
+
+bandaAbertura :: Evento -> String
+bandaAbertura (Evento [] _) = "Nenhuma banda de abertura"
+bandaAbertura (Evento (b:_) _) = nomeBanda b
+
+bandaEncerramento :: Evento -> String
+bandaEncerramento (Evento [] _) = "Nenhuma banda final"
+bandaEncerramento (Evento bs _) = nomeBanda (last bs)
+
+main :: IO ()
+main = do
+    let b1 = Banda "Alvorada" "Rock" 1000
+        b2 = Banda "Noite Clara" "Pop" 1500
+        ev1 = Evento [b1, b2] Ativo
+        ev2 = Evento [b1] Encerrado
+        ev3 = Evento [] Cancelado
+    print (custoTotalEvento ev1)
+    putStrLn (bandaAbertura ev1)
+    putStrLn (bandaEncerramento ev1)
+    print (custoTotalEvento ev3)
